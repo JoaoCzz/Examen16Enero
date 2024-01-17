@@ -1,42 +1,39 @@
 package com.corenetworks.Ejercicio2;
-
-import com.sun.source.tree.LambdaExpressionTree;
-
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
-import java.util.Scanner;
+import java.io.*;
 
 public class Leer {
     public static void main(String[] args) {
-        Scanner teclado = new Scanner(System.in);
-        System.out.println("Pon un numero");
-        int respuesta = teclado.nextInt();
-        if (respuesta >= 0 && respuesta <= 255) {
-            try {
-                FileReader fr = new FileReader("origen.txt");
-                while (true){
-                    int letra=0;
-                    letra= (char) fr.read();
-                    if((char)letra==respuesta){
-                        System.out.println((char)letra);
-                        break;
-                    }else {
-                        System.out.println("No");
-                        break;
-                }
-                    }
+        try(BufferedReader br = new BufferedReader(new InputStreamReader(System.in))) {
+            String AO = br.readLine();
+            String AD = br.readLine();
 
+            System.out.print("Ingrese un valor numérico entre 1 y 255: ");
+            int num = Integer.parseInt(br.readLine());
 
-            } catch (FileNotFoundException e) {
-                throw new RuntimeException(e);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
+            if (num < 1 || num > 255) {
+                System.out.println("No esta entre 1  y 255 chao");
+                return;
             }
-        }else {
-            System.out.println("No esta en los digitos permitidos");
-        }
 
+            encriptarArchivo(AO, AD, num);
+
+            System.out.println(" Ha sido cifrado");
+        } catch (IOException | NumberFormatException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static void encriptarArchivo(String archivoOrigen, String AD, int num) throws IOException {
+        try (FileReader fr = new FileReader(archivoOrigen);
+             FileWriter fw = new FileWriter(AD)) {
+
+            int Char;
+            while ((Char = fr.read()) != -1) {
+                int aEncriptar = Char ^ num;
+                fw.write(aEncriptar);
+            }
+        }
+    }
 
     }
-}
+
